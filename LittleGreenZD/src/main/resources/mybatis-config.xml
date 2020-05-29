@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!--设置mybatis的行为配置-->
+    <settings>
+        <!-- 开启mybatis的日志打印 -->
+        <setting name="logImpl" value="LOG4J"/>
+    </settings>
+    <!-- 实体类别名配置 -->
+    <typeAliases>
+        <package name="com.kgc.hz.entity" />
+    </typeAliases>
+    <!--配置mapper映射文件-->
+    <mappers>
+        <mapper resource="mapper/UserMapper.xml" />
+        <mapper resource="mapper/AreaMapper.xml"/>
+        <mapper resource="mapper/CardMapper.xml" />
+    </mappers>
+
+</configuration>

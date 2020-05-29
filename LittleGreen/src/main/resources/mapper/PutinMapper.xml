@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kgc.hz.dao.PutinDao">
+    <select id="getAreaList" resultType="Area">
+        select * from area
+    </select>
+
+    <insert id="addPutin" parameterType="Putin">
+        insert into putin(putUser,putKG,getIntegral,putAddress,userId,putTime)
+        values (#{putUser},#{putKG},#{getIntegral},#{putAddress},#{userId},NOW())
+    </insert>
+
+    <!--分页查询投放记录-->
+    <select id="getPutinPage" parameterType="PutinParameter" resultType="Putin">
+        SELECT p.id,u.userName,p.putKG,p.getIntegral,a.areaName,p.putTime
+        from putin p INNER JOIN area a on p.putAddress=a.cabinetId
+        INNER JOIN user u on p.userId=u.id
+        ORDER BY p.putTime DESC
+        limit #{pageIndex},#{pageSize}
+    </select>
+
+    <select id="getPutinCount" parameterType="PutinParameter" resultType="int">
+        select count(p.id)
+         from putin p INNER JOIN area a on p.putAddress=a.cabinetId
+        INNER JOIN user u on p.userId=u.id
+    </select>
+
+    <delete id="delPutin">
+        delete from putin where id=#{id}
+    </delete>
+
+    <select id="getPutin" resultType="Putin">
+        select * from putin where id=#{id};
+    </select>
+
+    <update id="updatePutin" parameterType="Putin" >
+        update putin set putKG=#{putKG},getIntegral=#{getIntegral},
+        putAddress=#{putAddress},userId=#{userId},putTime=now()
+        where id=#{id}
+    </update>
+</mapper>

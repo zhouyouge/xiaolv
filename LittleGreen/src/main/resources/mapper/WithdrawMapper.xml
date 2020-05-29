@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kgc.hz.dao.WithdrawDao">
+    <select id="getPutin" resultType="Putin">
+        select * from putin;
+    </select>
+    <!--添加提现记录-->
+    <insert id="addWithdrawd" parameterType="Withdraw">
+        insert into withdraw(withdrawUser,money,totalPrice,withdrawIntegral,
+        withdrawTime,putinId)
+        values(#{withdrawUser},#{money},#{totalPrice},#{withdrawIntegral},now(),#{putinId})
+    </insert>
+    <!--修改投放记录表-->
+    <update id="updatePutin" parameterType="Putin">
+        update putin set getIntegral=getIntegral-#{getIntegral}
+        where id=#{id}
+    </update>
+       <!-- 查询单个积分库存够不够-->
+    <select id="selectPutin" resultType="int">
+      select getIntegral from putin where id=#{id}
+    </select>
+
+    <!--分页-->
+    <select id="getwithdrawPage" parameterType="WithdrawParameter" resultType="Withdraw">
+        SELECT w.id,w.withdrawUser,w.money,w.withdrawIntegral,w.totalPrice,
+        w.withdrawTime,p.putUser
+        FROM withdraw w
+
+        INNER JOIN putin p on p.id=w.putinId
+
+        ORDER BY w.withdrawTime DESC
+        limit #{pageIndex},#{pageSize}
+    </select>
+
+    <!--分页查询总记录-->
+    <select id="getwithdrawCount" parameterType="WithdrawParameter" resultType="int">
+        SELECT count(w.id)
+        FROM withdraw w
+
+        INNER JOIN putin p on p.id=w.putinId
+
+    </select>
+    <!--删除-->
+    <delete id="deletewit">
+        delete from withdraw where id=#{id}
+    </delete>
+
+   <!-- 修改-->
+    <update id="updeteWit" parameterType="Withdraw">
+        update Withdraw set
+        withdrawUser=#{withdrawUser},
+        money=#{money},
+        withdrawIntegral=#{withdrawIntegral},
+        totalPrice=#{money}*#{withdrawIntegral},
+        withdrawTime=now()
+        where id=#{id}
+    </update>
+    <!--根据ID查询单个提现记录信息-->
+    <select id="getWits" resultType="Withdraw">
+      select  *from  Withdraw where id=#{id}
+    </select>
+
+</mapper>

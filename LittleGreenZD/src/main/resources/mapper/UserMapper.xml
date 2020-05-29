@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kgc.hz.dao.UserDao">
+    <select id="getUser" resultType="User" parameterType="User">
+        select * from user
+        where userName=#{userName} and password=#{password}
+    </select>
+    <select id="getUserList" parameterType="UserParameter" resultType="User">
+        SELECT u.id,r.roleName,u.userName,u.password,u.realName,
+        u.address,u.userPhone,u.integral,u.account,u.createTime,
+        u.miTime
+        FROM user u
+        INNER JOIN role r on u.roleId = r.id
+        where r.roleName='管理员'
+        or r.roleName='用户'
+        ORDER BY u.createTime ASC
+        limit #{pageIndex},#{pageSize}
+    </select>
+    <select id="getCount" parameterType="UserParameter" resultType="int">
+        select count(id) from user
+    </select>
+</mapper>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kgc.hz.dao.CabinetDao">
+    <!--分页查询-->
+    <select id="getCabPage" parameterType="CabinetParameter" resultType="Cabinet">
+        select id,state,cabinetAddress,createTime,miTime
+        from cabinet
+        <where>
+            <if test="state!='' and state!=null">
+                state=#{state}
+            </if>
+            <!--<if test="cabinetAddress!='' and cabinetAddress!=null">
+                and cabinetAddress=#{cabinetAddress}
+            </if>
+            <if test="createTime!='' and createTime!=null">
+                and createTime=#{createTime}
+            </if>-->
+        </where>
+        order by createTime desc
+        limit #{pageIndex},#{pageSize}
+    </select>
+    <!--获取分页数量-->
+    <select id="CabCount" resultType="int" parameterType="CabinetParameter">
+        select count(id)
+        from cabinet
+    </select>
+    <!--添加回收柜信息-->
+    <insert id="addCabinet" parameterType="Cabinet">
+        insert into cabinet(id,state,cabinetAddress,createTime)
+        values (#{id},#{state},#{cabinetAddress},now())
+    </insert>
+    <!--修改回收柜信息-->
+    <update id="updateCabinet" parameterType="Cabinet">
+        update cabinet set state=#{state},cabinetAddress=#{cabinetAddress},miTime=now()
+        where id=#{id}
+    </update>
+    <select id="getCab" resultType="Cabinet" parameterType="int">
+        select * from cabinet where id=#{id}
+    </select>
+    <delete id="deleteCabinet">
+        delete * from cabinet where id=#{id}
+    </delete>
+</mapper>

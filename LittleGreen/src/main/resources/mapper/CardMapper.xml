@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kgc.hz.dao.CardDao">
+
+    <select id="getCardList" resultType="Card">
+        select * from card
+    </select>
+
+    <insert id="addCards" parameterType="Card">
+        insert into card(id,ICUserName,ICIntegral,phone,userAddress,createTime)
+        values (#{id},#{ICUserName},#{ICIntegral},#{phone},#{userAddress},NOW())
+    </insert>
+<!--分页查询-->
+    <select id="getCardPage" parameterType="CardParameter" resultType="Card">
+        select * from card
+        order by createTime desc
+        limit #{pageIndex},#{pageSize}
+    </select>
+
+    <select id="getCardCount" parameterType="CardParameter" resultType="int">
+        select count(id)
+        from card
+    </select>
+
+    <!--根据id查询单个IC卡信息-->
+    <select id="getCard" resultType="Card">
+        select * from card where id=#{id}
+    </select>
+    <!--修改IC卡信息-->
+    <update id="updateCard" parameterType="Card">
+        update card
+        set ICUserName=#{ICUserName},ICIntegral=#{ICIntegral},phone=#{phone},userAddress=#{userAddress},createTime=now()
+        where id = #{id}
+    </update>
+
+    <!--根据id删除IC卡信息-->
+    <delete id="delCard">
+        delete from card where id=#{id}
+    </delete>
+</mapper>

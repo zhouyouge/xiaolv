@@ -1,0 +1,81 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx.xsd
+    http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop.xsd
+    ">
+
+    <!--开启spring包注解扫描器-->
+    <context:component-scan base-package="*.*.*.service" />
+
+    <!--引入加载数据源-->
+    <bean  class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location">
+            <value>classpath:database.properties</value>
+        </property>
+    </bean>
+
+    <!-- 数据库连接池配置 -->
+    <bean id="datasource" class="com.alibaba.druid.pool.DruidDataSource"
+          destroy-method="close">
+        <property name="name" value="usercore"/>
+        <property name="url" value="${url}"/>
+        <property name="username" value="${username}"/>
+        <property name="password" value="${password}"/>
+        <property name="filters" value="stat"/>
+        <property name="maxActive" value="50"/>
+        <property name="initialSize" value="1"/>
+        <property name="maxWait" value="60000"/>
+        <property name="minIdle" value="1"/>
+        <!--等待关闭空闲连接的时间间隔30000-->
+        <property name="timeBetweenEvictionRunsMillis" value="30000"/>
+        <!--一个连接最小的存活时间300000毫秒-->
+        <property name="minEvictableIdleTimeMillis" value="300000"/>
+        <property name="validationQuery" value="SELECT 'x'"/>
+        <property name="testWhileIdle" value="true"/>
+        <property name="testOnBorrow" value="false"/>
+        <property name="testOnReturn" value="false"/>
+        <property name="poolPreparedStatements" value="true"/>
+        <property name="maxPoolPreparedStatementPerConnectionSize" value="50"/>
+    </bean>
+
+    <!--开启spring集成mybatis-->
+    <!--设置sqlsessionFactory bean对象-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="datasource"></property>
+        <property name="configLocation">
+            <value>classpath:mybatis-config.xml</value>
+        </property>
+    </bean>
+
+    <!--mapper 扫描器，基于mapper接口形式进行持久化操作-->
+    <bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.kgc.hz.dao" />
+    </bean>
+
+    <!--声明事务管理器-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="datasource" />
+    </bean>
+    <tx:annotation-driven transaction-manager="transactionManager" />
+
+    <!--设置sqlsession对象-->
+    <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg index="0" ref="sqlSessionFactory"></constructor-arg>
+    </bean>
+
+    <!-- 设置增强处理工具类bean对象-->
+    <bean id="serviceLogger" class="com.kgc.hz.util.ServiceLogger"></bean>
+    <!--启动注解开启面向切面编程的自动代理-->
+    <aop:aspectj-autoproxy />
+
+
+</beans>

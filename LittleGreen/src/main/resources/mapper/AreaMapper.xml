@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kgc.hz.dao.AreaDao">
+    <!--分页查询区域-->
+    <select id="getAreaList" parameterType="AreaParameter" resultType="Area">
+        SELECT a.id,a.areaName,c.cabinetAddress,a.createTime,c.state,c.miTime
+        FROM area a
+        INNER JOIN cabinet c on a.cabinetId = c.id
+        <where>
+            <if test="areaName!=null and areaName!=''">
+                a.areaName=#{areaName}
+            </if>
+        </where>
+        ORDER BY a.id
+        ASC
+        limit #{pageIndex},#{pageSize}
+    </select>
+    <!--查询区域分页的数量-->
+    <select id="getAreaCount" parameterType="AreaParameter" resultType="int">
+        select count(id) from area;
+    </select>
+    <!--添加区域信息-->
+    <insert id="addArea" parameterType="Area">
+        INSERT into
+        area(id,areaName,cabinetId,createTime)
+        VALUES(#{id},#{areaName},#{cabinetId},now())
+    </insert>
+    <!--修改区域信息-->
+        <select id="getArea" resultType="Area">
+            select * from area
+            where id = #{id}
+        </select>
+    <update id="updateArea" parameterType="Area">
+            UPDATE area SET areaName=#{areaName},cabinetId=#{cabinetId},createTime=now()
+            where id = #{id}
+    </update>
+    <!--删除区域信息-->
+    <delete id="deleteArea" parameterType="Area">
+        delete from area
+        where id = #{id}
+    </delete>
+    <!--全查单个区域内的数量-->
+    <select id="getACList" resultType="int">
+        SELECT count(c.id)
+        FROM area_cabinet ac
+        INNER JOIN area a on ac.areaId=a.id
+        INNER JOIN cabinet c on ac.cabinetId=c.id
+        WHERE a.areaName=#{areaName}
+    </select>
+    <!--查单个区域内未满的数量-->
+    <select id="getACList1" resultType="int">
+        SELECT count(c.id)
+        FROM area_cabinet ac
+        INNER JOIN area a on ac.areaId=a.id
+        INNER JOIN cabinet c on ac.cabinetId=c.id
+        WHERE a.areaName=#{areaName}
+        and c.state='未满'
+    </select>
+    <!--查单个区域内已满的数量-->
+    <select id="getACList2" resultType="int">
+        SELECT count(c.id)
+        FROM area_cabinet ac
+        INNER JOIN area a on ac.areaId=a.id
+        INNER JOIN cabinet c on ac.cabinetId=c.id
+        WHERE a.areaName=#{areaName}
+        and c.state='已满'
+    </select>
+    <!--查单个区域内维修中的数量-->
+    <select id="getACList3" resultType="int">
+        SELECT count(c.id)
+        FROM area_cabinet ac
+        INNER JOIN area a on ac.areaId=a.id
+        INNER JOIN cabinet c on ac.cabinetId=c.id
+        WHERE a.areaName=#{areaName}
+        and c.state='维修中'
+    </select>
+    <!--全查区域表-->
+    <select id="getAreaCList" resultType="Area">
+        select * from area
+    </select>
+</mapper>

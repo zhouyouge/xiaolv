@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kgc.hz.dao.ConversionDao">
+    <select id="getShopList" resultType="Shop">
+        select * from shop
+    </select>
+
+    <!--分页查询-->
+    <select id="getConversionPage" parameterType="ConversionParameter" resultType="Conversion">
+        SELECT c.id,u.userName,s.shopName,c.conversionIntegral,c.conversionTime
+        FROM conversion c INNER JOIN user u on c.conversionUser=u.id
+        INNER JOIN shop s on c.conversionId=s.id
+        ORDER BY conversionTime DESC
+        limit #{pageIndex},#{pageSize}
+    </select>
+
+    <select id="getConversionCount" parameterType="ConversionParameter" resultType="int">
+        select count(c.id)
+        FROM conversion c INNER JOIN user u on c.conversionUser=u.id
+        INNER JOIN shop s on c.conversionId=s.id
+    </select>
+
+    <delete id="delConversion">
+        delete from conversion where id=#{id}
+    </delete>
+
+    <select id="getConversion" resultType="Conversion">
+        select * from conversion where id=#{id};
+    </select>
+
+    <update id="updateConversion" parameterType="Conversion" >
+        update conversion
+        set conversionUser=#{conversionUser},conversionId=#{conversionId},conversionIntegral=#{conversionIntegral},
+        conversionTime=now()
+        where id=#{id}
+    </update>
+</mapper>

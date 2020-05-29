@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kgc.hz.dao.ForumDao">
+    <!--查询论坛信息-->
+    <select id="getForumList" resultType="User">
+        select * from user;
+    </select>
+    <!--添加论坛信息-->
+    <insert id="addForum" parameterType="Forum">
+        INSERT INTO forum(forumName,forumContent,uploader,forumTime)
+        values (#{forumName},#{forumContent},#{uploader},now())
+    </insert>
+    <!--分页-->
+    <select id="getForumPage" parameterType="WithdrawParameter" resultType="Forum">
+    SELECT f.id,f.forumName,f.forumContent,f.uploader,f.forumTime,
+    u.userName
+    FROM forum f
+    INNER JOIN user u ON u.id=f.uploader
+    ORDER BY f.forumTime desc
+    limit #{pageIndex},#{pageSize}
+
+  </select>
+    <!--查总记录数-->
+    <select id="getForumCount" parameterType="WithdrawParameter" resultType="int">
+        SELECT count(f.id)
+        FROM forum f
+        INNER JOIN user u ON u.id=f.uploader
+    </select>
+
+
+    <!--删除-->
+    <delete id="deletefor">
+        delete from forum where id=#{id}
+    </delete>
+
+
+    <!-- 修改-->
+    <update id="updetefor" parameterType="Forum">
+       update forum set
+        forumName=#{forumName},forumContent=#{forumContent},
+        uploader=#{uploader},forumTime=now()
+        where id=#{id}
+    </update>
+    <!--根据ID查询单个销售记录信息-->
+    <select id="getfors" resultType="Forum">
+      select  * from  Forum where id=#{id}
+    </select>
+</mapper>
